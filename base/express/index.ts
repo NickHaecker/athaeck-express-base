@@ -9,91 +9,113 @@ export enum ExpressRouteType {
 }
 
 export class ExpressRoute {
-    protected _route: string;
-    protected _routeType: ExpressRouteType;
+    protected route: string;
+    protected routeType: ExpressRouteType;
 
     constructor(route: string, routeType: ExpressRouteType) {
-        console.log("init");
+        this.route = route;
+        this.routeType = routeType;
+        console.log(`----requested ${this.route} with method ${this.routeType} ----`);
     }
 
-    get route(): string {
-        return this._route;
+    public get Route(): string {
+        return this.route;
     }
 
-    get routeType(): ExpressRouteType {
-        return this._routeType;
+    public get RouteType(): ExpressRouteType {
+        return this.routeType;
     }
 
     handleRequest = (_req: express.Request, _res: express.Response, _next: express.NextFunction) => {
-        makeResponse(_res, 200, `this is ${this._route}`);
+        makeResponse(_res, 200, `---${this.route}`);
     }
 }
 
 export abstract class ExpressRoutingAddon {
-    abstract createRoutes(): void;
-    intializeRoutes(app: any, routes: ExpressRoute[]): any {
-
+    protected routes: ExpressRoute[] = []
+    abstract AddRoute(route: ExpressRoute): void;
+    intializeRoutes(app: any): any {
+        for (const route of this.routes) {
+            switch (route.RouteType) {
+                case ExpressRouteType.GET:
+                    app.get(route.Route, route.handleRequest);
+                    break;
+                case ExpressRouteType.POST:
+                    app.post(route.Route, route.handleRequest);
+                    break;
+                case ExpressRouteType.DELETE:
+                    app.delete(route.Route, route.handleRequest);
+                    break;
+                default:
+                    app.put(route.Route, route.handleRequest);
+                    break;
+            }
+        }
         return app;
     }
 }
 
 export abstract class ExpressRouter extends ExpressRoutingAddon {
-    protected _app = Router();
-    protected _routes: ExpressRoute[] = [];
-    protected _router: ExpressRouter[] = [];
-
-    protected _path: string;
-    protected _adapter: string;
+    protected app = Router();
+    protected extensions: ExpressRouter[] = [];
+    protected path: string;
+    protected adapter: string;
 
     constructor(path: string, adapter: string) {
         super();
-
+        this.path = path;
+        this.adapter = adapter;
+        console.log(`----init adapter ${this.adapter} with path ${path} ----`);
     }
 
-    get path(): string {
-        return this._path;
+    get Path(): string {
+        return this.path;
     }
 
-    get adapter(): string {
-        return this._adapter;
+    get Adapter(): string {
+        return this.adapter;
     }
 
-    get app(): any {
-        return this._app;
+    get App(): any {
+        return this.app;
     }
-
-    abstract createRoutes(): void;
-
-    protected initializeExtensions(app: any, adapter: string): any {
-
-        return app;
+    public AddExtension(extension: ExpressRouter): void {
+        this.extensions.push(extension);
+    }
+    AddRoute(route: ExpressRoute): void{
+        this.routes.push(route);
+    }
+    protected initializeExtensions(app: any): any {
+        for (const extension of this.extensions) {
+            app.use(extension.path, extension.app);
+        }
     }
 
 
 }
 
 export abstract class ExpressApplication extends ExpressRoutingAddon {
-
-    protected _app = express();
-    protected _routes: ExpressRoute[] = [];
-    protected _router: ExpressRouter[] = [];
-
-    protected _port: string | number;
+    protected app = express();
+    protected adaper: ExpressRouter[] = [];
+    protected port: string | number;
 
     constructor() {
         super();
-
+        this.port = process.env.PORT || 3030;
     }
 
-    abstract createRoutes(): void;
+    abstract AddRoute(route: ExpressRoute): void;
     abstract initializeMiddlewares(): void;
-    initializeAdapter(app: any, router: ExpressRouter[]): any {
-
+    protected initializeAdapter(app: any): any {
+        for (const adapter of this.adaper) {
+            app.use(adapter.Path, adapter.App);
+        }
         return app;
     }
-    createAdapter(router: ExpressRouter[], dir: any): void {
-
+    public AddAdapter(adapter: ExpressRouter): void {
+        this.adaper.push(adapter);
     }
+
     main(): void {
 
     }
