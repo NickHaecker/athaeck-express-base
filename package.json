@@ -9,7 +9,7 @@
         "dev": "concurrently \"npm:build:dev\" \"npm:start:dev\"",
         "start": "node dist/index.js"
     },
-    "author": "",
+    "author": "Nick Häcker",
     "license": "ISC",
     "dependencies": {
         "@types/express": "^4.17.14",
@@ -23,6 +23,7 @@
         "serve-static": "^1.15.0"
     },
     "devDependencies": {
+        "@types/config": "^3.3.2",
         "@types/node": "^18.11.9",
         "cross-env": "^7.0.3",
         "nodemon": "^3.0.1",
