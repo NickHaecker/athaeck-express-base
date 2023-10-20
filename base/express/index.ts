@@ -95,8 +95,10 @@ export abstract class BaseExpressApplication extends BaseExpressRoutingAddon {
         this.app.use(adapter.Path, adapter.App);
     }
 
-    main(): void {
-
+    Start(): void {
+        this.app.listen(this.port, () => {
+            console.log( `server started at http://localhost:${ this.port }` );
+        });
     }
 }
 
