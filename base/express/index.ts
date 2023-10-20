@@ -51,7 +51,7 @@ export function AddRoute(app: any, route: BaseExpressRoute): any {
     }
     return app;
 }
-export abstract class  BaseExpressRouter extends BaseExpressRoutingAddon {
+export abstract class BaseExpressRouter extends BaseExpressRoutingAddon {
     protected app = Router();
     protected path: string;
     protected adapter: string;
@@ -77,10 +77,9 @@ export abstract class  BaseExpressRouter extends BaseExpressRoutingAddon {
     public AddExtension(extension: BaseExpressRouter): void {
         this.app.use(extension.path, extension.app);
     }
-    abstract AddRoute(route: BaseExpressRoute): void;
 }
 
-export abstract class ExpressApplication extends BaseExpressRoutingAddon {
+export abstract class BaseExpressApplication extends BaseExpressRoutingAddon {
     protected app = express();
     protected port: string | number;
 
