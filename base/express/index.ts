@@ -8,7 +8,7 @@ export enum ExpressRouteType {
     GET = "GET", POST = "POST", DELETE = "DELETE", PUT = "PUT"
 }
 
-export class ExpressRoute {
+export class BaseExpressRoute {
     protected route: string;
     protected routeType: ExpressRouteType;
 
@@ -31,10 +31,10 @@ export class ExpressRoute {
     }
 }
 
-export abstract class ExpressRoutingAddon {
-    abstract AddRoute(route: ExpressRoute): void;
+export abstract class BaseExpressRoutingAddon {
+    abstract AddRoute(route: BaseExpressRoute): void;
 }
-export function AddRoute(app: any, route: ExpressRoute): any {
+export function AddRoute(app: any, route: BaseExpressRoute): any {
     switch (route.RouteType) {
         case ExpressRouteType.GET:
             app.get(route.Route, route.handleRequest);
@@ -51,7 +51,7 @@ export function AddRoute(app: any, route: ExpressRoute): any {
     }
     return app;
 }
-export abstract class ExpressRouter extends ExpressRoutingAddon {
+export abstract class  BaseExpressRouter extends BaseExpressRoutingAddon {
     protected app = Router();
     protected path: string;
     protected adapter: string;
@@ -74,13 +74,13 @@ export abstract class ExpressRouter extends ExpressRoutingAddon {
     get App(): any {
         return this.app;
     }
-    public AddExtension(extension: ExpressRouter): void {
+    public AddExtension(extension: BaseExpressRouter): void {
         this.app.use(extension.path, extension.app);
     }
-    abstract AddRoute(route: ExpressRoute): void;
+    abstract AddRoute(route: BaseExpressRoute): void;
 }
 
-export abstract class ExpressApplication extends ExpressRoutingAddon {
+export abstract class ExpressApplication extends BaseExpressRoutingAddon {
     protected app = express();
     protected port: string | number;
 
@@ -89,10 +89,10 @@ export abstract class ExpressApplication extends ExpressRoutingAddon {
         this.port = process.env.PORT || 3030;
     }
 
-    abstract AddRoute(route: ExpressRoute): void;
+    abstract AddRoute(route: BaseExpressRoute): void;
     abstract initializeMiddleware(): void;
 
-    public AddAdapter(adapter: ExpressRouter): void {
+    public AddAdapter(adapter: BaseExpressRouter): void {
         this.app.use(adapter.Path, adapter.App);
     }
 
