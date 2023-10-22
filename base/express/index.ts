@@ -53,14 +53,15 @@ export function AddRoute(app: any, route: BaseExpressRoute): any {
 }
 export abstract class BaseExpressRouter extends BaseExpressRoutingAddon {
     protected app = Router();
-    protected path: string;
-    protected adapter: string;
+    abstract path: string;
+    abstract adapter: string;
 
-    constructor(path: string, adapter: string) {
+    constructor() {
         super();
-        this.path = path;
-        this.adapter = adapter;
-        console.log(`----init adapter ${this.adapter} with path ${path} ----`);
+        this.Log()
+    }
+    private Log(): void {
+        console.log(`----init adapter ${this.adapter} with path ${this.path} ----`);
     }
 
     get Path(): string {
@@ -82,6 +83,7 @@ export abstract class BaseExpressRouter extends BaseExpressRoutingAddon {
 export abstract class BaseExpressApplication extends BaseExpressRoutingAddon {
     protected app = express();
     protected port: string | number;
+    protected apiFactory: BaseExpressApiFactory
 
     constructor() {
         super();
@@ -97,11 +99,30 @@ export abstract class BaseExpressApplication extends BaseExpressRoutingAddon {
 
     Start(): void {
         this.app.listen(this.port, () => {
-            console.log( `server started at http://localhost:${ this.port }` );
+            console.log(`server started at http://localhost:${this.port}`);
         });
     }
 }
 
 export function makeResponse(res: express.Response, code: number, body: any = null): void {
     res.status(code).json(body);
+}
+export abstract class BaseExpressApiFactory {
+    protected adapter: any[] = []
+    constructor() {
+        this.CreateAdapter()
+    }
+    protected AddAdapter(adapter: any[]) {
+        this.adapter = adapter
+    }
+    protected abstract CreateAdapter(): void
+    public ConnectAdpater(application: BaseExpressApplication) {
+        if(this.adapter.length === 0){
+            return;
+        }
+        for (const Adapter of this.adapter) {
+            const adapter: BaseExpressRouter = new Adapter()
+            application.AddAdapter(adapter);
+        }
+    }
 }
