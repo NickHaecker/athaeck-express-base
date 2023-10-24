@@ -72,7 +72,7 @@ export abstract class BaseExpressRouter extends BaseExpressRoutingAddon {
         return this.adapter;
     }
 
-    get App(): any {
+    get App(): Router {
         return this.app;
     }
     public AddExtension(extension: BaseExpressRouter): void {
