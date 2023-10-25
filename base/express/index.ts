@@ -109,7 +109,9 @@ export function makeResponse(res: express.Response, code: number, body: any = nu
 }
 export abstract class BaseExpressApiFactory {
     protected adapter: any[] = []
-    constructor() {
+    protected rootFolder:string
+    constructor(root:string) {
+        this.rootFolder = root
         this.CreateAdapter()
     }
     protected AddAdapter(adapter: any[]) {
