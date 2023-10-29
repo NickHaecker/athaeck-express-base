@@ -26,12 +26,17 @@ export class BaseExpressRoute {
         return this.routeType;
     }
 
+    public TakeRouter(router:BaseExpressRouter):void{
+        router.AddRoute(this)
+    }
+
     handleRequest = (_req: express.Request, _res: express.Response, _next: express.NextFunction) => {
         makeResponse(_res, 200, `---${this.route}`);
     }
 }
 
 export abstract class BaseExpressRoutingAddon {
+
     abstract AddRoute(route: BaseExpressRoute): void;
 }
 export function AddRoute(app: any, route: BaseExpressRoute): any {
@@ -55,6 +60,7 @@ export abstract class BaseExpressRouter extends BaseExpressRoutingAddon {
     protected app = Router();
     abstract path: string;
     abstract adapter: string;
+    protected routeFactory:BaseExpressRouteFactory
 
     constructor() {
         super();
@@ -109,8 +115,8 @@ export function makeResponse(res: express.Response, code: number, body: any = nu
 }
 export abstract class BaseExpressApiFactory {
     protected adapter: any[] = []
-    protected rootFolder:string
-    constructor(root:string) {
+    protected rootFolder: string
+    constructor(root: string) {
         this.rootFolder = root
         this.CreateAdapter()
     }
@@ -119,12 +125,33 @@ export abstract class BaseExpressApiFactory {
     }
     protected abstract CreateAdapter(): void
     public ConnectAdpater(application: BaseExpressApplication) {
-        if(this.adapter.length === 0){
+        if (this.adapter.length === 0) {
             return;
         }
         for (const Adapter of this.adapter) {
             const adapter: BaseExpressRouter = new Adapter()
             application.AddAdapter(adapter);
+        }
+    }
+}
+export abstract class BaseExpressRouteFactory {
+    protected routes: any[] = []
+    protected rootFolder: string
+    constructor(root: string) {
+        this.rootFolder = root
+        this.CreateRouts()
+    }
+    protected abstract CreateRouts(): void
+    protected AddRoute(routes: any[]) {
+        this.routes = routes
+    }
+    public ConnectRoutes(router: BaseExpressRouter): void {
+        if (this.routes.length === 0) {
+            return;
+        }
+        for (const Route of this.routes) {
+            const route: BaseExpressRoute = new Route()
+            route.TakeRouter(router)
         }
     }
 }
