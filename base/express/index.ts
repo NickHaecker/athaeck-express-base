@@ -26,7 +26,7 @@ export class BaseExpressRoute {
         return this.routeType;
     }
 
-    public TakeRouter(router:BaseExpressRouter):void{
+    public TakeRouter(router: BaseExpressRouter): void {
         router.AddRoute(this)
     }
 
@@ -36,7 +36,6 @@ export class BaseExpressRoute {
 }
 
 export abstract class BaseExpressRoutingAddon {
-
     abstract AddRoute(route: BaseExpressRoute): void;
 }
 export function AddRoute(app: any, route: BaseExpressRoute): any {
@@ -60,7 +59,7 @@ export abstract class BaseExpressRouter extends BaseExpressRoutingAddon {
     protected app = Router();
     abstract path: string;
     abstract adapter: string;
-    protected routeFactory:BaseExpressRouteFactory
+    protected routeFactory: BaseExpressRouteFactory
 
     constructor() {
         super();
