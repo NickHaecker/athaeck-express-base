@@ -58,9 +58,8 @@ export abstract class BaseExpressRouter extends BaseExpressRoutingAddon {
 
     constructor() {
         super();
-        this.Log()
     }
-    private Log(): void {
+    protected Log(): void {
         console.log(`----init adapter ${this.adapter} with path ${this.path} ----`);
     }
 
