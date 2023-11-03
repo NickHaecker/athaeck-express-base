@@ -1,6 +1,6 @@
 import express, { Router } from "express";
-import config from "config";
-import path from "path";
+import { GetLocalIP } from "../network";
+
 export enum ExpressClassType {
     APP = "APP", ROUTER = "ROUTER", ROUTE = "ROUTE"
 }
@@ -103,7 +103,8 @@ export abstract class BaseExpressApplication extends BaseExpressRoutingAddon {
 
     Start(): void {
         this.app.listen(this.port, () => {
-            console.log(`server started at http://localhost:${this.port}`);
+            const ip: string = GetLocalIP()
+            console.log(`server started at http://${ip}:${this.port}`);
         });
     }
 }
