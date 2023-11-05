@@ -1,5 +1,8 @@
 import express, { Router } from "express";
 import { GetLocalIP } from "../network";
+import config from "config"
+
+const expressConfig: any = config.get("express")
 
 export enum ExpressClassType {
     APP = "APP", ROUTER = "ROUTER", ROUTE = "ROUTE"
@@ -96,7 +99,7 @@ export abstract class BaseExpressApplication extends BaseExpressRoutingAddon {
         if (envPort !== undefined) {
             port = <number><unknown>envPort
         } else {
-            port = 3030
+            port = expressConfig.port
         }
         this.port = port
     }
