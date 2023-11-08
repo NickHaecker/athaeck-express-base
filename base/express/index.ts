@@ -91,6 +91,7 @@ export abstract class BaseExpressApplication extends BaseExpressRoutingAddon {
     protected app = express();
     protected port: number;
     protected apiFactory: BaseExpressApiFactory
+    protected routeFactory:BaseExpressRouteFactory
 
     constructor() {
         super();
