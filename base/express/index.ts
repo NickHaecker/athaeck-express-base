@@ -105,6 +105,10 @@ export abstract class BaseExpressApplication extends BaseExpressRoutingAddon {
         this.port = port
     }
 
+    public get App(){
+        return this.app
+    }
+
     abstract AddRoute(route: BaseExpressRoute): void;
     abstract initializeMiddleware(): void;
 
