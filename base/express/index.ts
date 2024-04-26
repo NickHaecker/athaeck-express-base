@@ -94,6 +94,7 @@ export abstract class BaseExpressApplication extends BaseExpressRoutingAddon {
     protected apiFactory: BaseExpressApiFactory
     protected routeFactory: BaseExpressRouteFactory
     private _expressURL: string;
+    private _ip: string
 
     constructor() {
         super();
@@ -105,6 +106,10 @@ export abstract class BaseExpressApplication extends BaseExpressRoutingAddon {
             port = expressConfig.port
         }
         this.port = port
+
+        this._ip = GetLocalIP()
+
+        this._expressURL = `http://${this._ip}:${this.port}`
     }
 
     public get App() {
@@ -123,11 +128,9 @@ export abstract class BaseExpressApplication extends BaseExpressRoutingAddon {
     }
 
     Start(): void {
-        const ip: string = GetLocalIP()
 
-        this._expressURL = `http://${ip}:${this.port}`
 
-        this.app.listen(this.port, ip, () => {
+        this.app.listen(this.port, this._ip, () => {
             console.log(`server started at ${this._expressURL}`);
         });
     }
