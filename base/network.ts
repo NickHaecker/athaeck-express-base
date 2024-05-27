@@ -31,7 +31,7 @@ export function GetLocalIP(): string {
         return localIP;
     }
 
-    const desiredAdapter = "Ethernet";
+    const desiredAdapter = expressConfig.networkAdapter
 
     Object.keys(ifaces).forEach((ifname) => {
         console.log(ifname);
