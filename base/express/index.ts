@@ -30,7 +30,6 @@ export class BaseExpressRoute {
     }
 
     public TakeRouter(router: BaseExpressRouter): void {
-        // console.log("1234546",router)
         router.AddRoute(this)
     }
 
