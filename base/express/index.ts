@@ -1,8 +1,8 @@
 import express, { Router } from "express";
 import { GetLocalIP } from "../network";
-import config from "config"
+import config from "config";
 
-const expressConfig: any = config.get("express")
+const expressConfig: any = config.get("express");
 
 export enum ExpressClassType {
     APP = "APP", ROUTER = "ROUTER", ROUTE = "ROUTE"
@@ -30,7 +30,7 @@ export class BaseExpressRoute {
     }
 
     public TakeRouter(router: BaseExpressRouter): void {
-        router.AddRoute(this)
+        router.AddRoute(this);
     }
 
     handleRequest = (_req: express.Request, _res: express.Response, _next: express.NextFunction) => {
@@ -62,7 +62,7 @@ export abstract class BaseExpressRouter extends BaseExpressRoutingAddon {
     protected app = Router();
     abstract path: string;
     abstract adapter: string;
-    protected routeFactory: BaseExpressRouteFactory
+    protected routeFactory: BaseExpressRouteFactory;
 
     constructor() {
         super();
@@ -90,33 +90,33 @@ export abstract class BaseExpressRouter extends BaseExpressRoutingAddon {
 export abstract class BaseExpressApplication extends BaseExpressRoutingAddon {
     protected app = express();
     protected port: number;
-    protected apiFactory: BaseExpressApiFactory
-    protected routeFactory: BaseExpressRouteFactory
+    protected apiFactory: BaseExpressApiFactory;
+    protected routeFactory: BaseExpressRouteFactory;
     private _expressURL: string;
-    private _ip: string
+    private _ip: string;
 
     constructor() {
         super();
-        let port: number
-        const envPort = process.env.PORT
+        let port: number;
+        const envPort = process.env.PORT;
         if (envPort !== undefined) {
-            port = <number><unknown>envPort
+            port = <number><unknown>envPort;
         } else {
-            port = expressConfig.port
+            port = expressConfig.port;
         }
-        this.port = port
+        this.port = port;
 
-        this._ip = GetLocalIP()
+        this._ip = GetLocalIP();
 
-        this._expressURL = `http://${this._ip}:${this.port}`
+        this._expressURL = `http://${this._ip}:${this.port}`;
     }
 
     public get App() {
-        return this.app
+        return this.app;
     }
 
     public get ExpressURL() {
-        return this._expressURL
+        return this._expressURL;
     }
 
     abstract AddRoute(route: BaseExpressRoute): void;
@@ -139,44 +139,44 @@ export function makeResponse(res: express.Response, code: number, body: any = nu
     res.status(code).json(body);
 }
 export abstract class BaseExpressApiFactory {
-    protected adapter: any[] = []
-    protected rootFolder: string
+    protected adapter: any[] = [];
+    protected rootFolder: string;
     constructor(root: string) {
-        this.rootFolder = root
-        this.CreateAdapter()
+        this.rootFolder = root;
+        this.CreateAdapter();
     }
     protected AddAdapter(adapter: any[]) {
-        this.adapter = adapter
+        this.adapter = adapter;
     }
-    protected abstract CreateAdapter(): void
+    protected abstract CreateAdapter(): void;
     public ConnectAdpater(application: BaseExpressApplication) {
         if (this.adapter.length === 0) {
             return;
         }
         for (const Adapter of this.adapter) {
-            const adapter: BaseExpressRouter = new Adapter()
+            const adapter: BaseExpressRouter = new Adapter();
             application.AddAdapter(adapter);
         }
     }
 }
 export abstract class BaseExpressRouteFactory {
-    protected routes: any[] = []
-    protected rootFolder: string
+    protected routes: any[] = [];
+    protected rootFolder: string;
     constructor(root: string) {
-        this.rootFolder = root
-        this.CreateRouts()
+        this.rootFolder = root;
+        this.CreateRouts();
     }
-    protected abstract CreateRouts(): void
+    protected abstract CreateRouts(): void;
     protected AddRoute(routes: any[]) {
-        this.routes = routes
+        this.routes = routes;
     }
     public ConnectRoutes(router: BaseExpressRouter): void {
         if (this.routes.length === 0) {
             return;
         }
         for (const Route of this.routes) {
-            const route: BaseExpressRoute = new Route()
-            route.TakeRouter(router)
+            const route: BaseExpressRoute = new Route();
+            route.TakeRouter(router);
         }
     }
 }
